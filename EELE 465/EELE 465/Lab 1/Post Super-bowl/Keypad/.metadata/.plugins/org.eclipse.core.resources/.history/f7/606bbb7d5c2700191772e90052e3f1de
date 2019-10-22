@@ -1,0 +1,186 @@
+;Madison Martinsen
+;1/30/19
+;Keypad
+
+
+	INCLUDE 'derivative.inc'
+	XDEF _Startup, main
+	XDEF _Vkeyboard_ISR
+	XREF __SEG_END_SSTACK
+	
+
+*----RAM Variables (Start of RAM)----
+	ORG $0060
+Keypress: 	DS.B 1
+ROW:		DS.B 1	
+	
+*----ROM Variables (start of ROM)---
+	ORG $E000
+
+main:
+	 _Startup:
+	 		LDHX #__SEG_END_SSTACK ;Initialize the stack pointer
+			TXS ;Transfer Index Register to SP
+	 			
+*----Turn off Watchdog-----------------------------------
+	 		LDA SOPT1
+			AND #%01111111
+			STA SOPT1
+			
+*----Initialize Variables--------------------------------
+			CLR Keypress
+			
+*----Enable Inerupts-------------------------------------
+	 		CLI
+			
+*----Disable Pullup Resistors----------------------------
+			LDA #%00000000
+			STA PTAPE
+			
+*----Enable Keyboard Interrupts--------------------------
+			BSET 1, KBISC
+
+*----Enable pins as keyboard interrupts----
+			LDA #%00001111 ;Setting PTA0,1,2,3 (Columns)
+			STA KBIPE
+
+*----SET Rows as inputs and to LOW state----
+			BCLR 2, PTBDD
+			BCLR 3,	PTBDD
+			BCLR 4, PTBDD
+			BCLR 5, PTBDD
+			
+			BCLR 2, PTBD
+			BCLR 3,	PTBD
+			BCLR 4, PTBD
+			BCLR 5, PTBD
+			
+*----Set Columns as outputs----
+			BCLR 0, PTADD
+			BCLR 1, PTADD
+			BCLR 2, PTADD
+			BCLR 3, PTADD
+			
+mainLoop:
+	Column1:;(*)
+			BSET 0, PTAD ;Set column 1 to HIGH
+		*----Check for 1----
+			LDA PTBD
+			EOR #%00000100
+			STA ROW
+			BRCLR 2, ROW, RESET
+			
+		*----Check for 4----
+			LDA PTBD
+			EOR #%00001000
+			STA ROW
+			BRCLR 3, ROW, RESET
+			
+		*----Check for 7----
+			LDA PTBD
+			EOR #%00010000
+			STA ROW
+			BRCLR 4, ROW, RESET
+			
+		*----Check for *----
+			LDA PTBD
+			EOR #%00100000
+			STA ROW
+			BRCLR 5, ROW, RESET
+	Column2:;(0)
+			BSET 1, PTAD ;Set column 2 to HIGH
+		*----Check for 2----
+			LDA PTBD
+			EOR #%00000100
+			STA ROW
+			BRCLR 2, ROW, RESET
+			
+		*----Check for 5----
+			LDA PTBD
+			EOR #%00001000
+			STA ROW
+			BRCLR 3, ROW, RESET
+			
+		*----Check for 8----
+			LDA PTBD
+			EOR #%00010000
+			STA ROW
+			BRCLR 4, ROW, RESET
+			
+		*----Check for 0----
+			LDA PTBD
+			EOR #%00100000
+			STA ROW
+			BRCLR 5, ROW, RESET
+			
+	RESET:
+			;Returens Rows to LOW and reset ROW variable
+			LDX #%00000000
+			STA ROW
+			BCLR 2, PTBD
+			BCLR 3,	PTBD
+			BCLR 4, PTBD
+			BCLR 5, PTBD
+			BRA mainLoop
+			
+	Column3:;(#)
+			BSET 2, PTAD ;Set column 3 to HIGH
+		*----Check for 3----
+			LDA PTBD
+			EOR #%00000100
+			STA ROW
+			BRCLR 2, ROW, RESET
+			
+		*----Check for 6----
+			LDA PTBD
+			EOR #%00001000
+			STA ROW
+			BRCLR 3, ROW, RESET
+			
+		*----Check for 9----
+			LDA PTBD
+			EOR #%00010000
+			STA ROW
+			BRCLR 4, ROW, RESET
+			
+		*----Check for #----
+			LDA PTBD
+			EOR #%00100000
+			STA ROW
+			BRCLR 5, ROW, RESET
+	Column4:;(D)
+			BSET 3, PTAD ;Set Column 4 to HIGH
+		*----Check for A----
+			LDA PTBD
+			EOR #%00000100
+			STA ROW
+			BRCLR 2, ROW, RESET
+			
+		*----Check for B----
+			LDA PTBD
+			EOR #%00001000
+			STA ROW
+			BRCLR 3, ROW, RESET
+			
+		*----Check for C----
+			LDA PTBD
+			EOR #%00010000
+			STA ROW
+			BRCLR 4, ROW, RESET
+			
+		*----Check for D----
+			LDA PTBD
+			EOR #%00100000
+			STA ROW
+			BRCLR 5, ROW, RESET
+						
+	
+			
+	_Vkeyboard_ISR:
+				LDA PTAD
+				STA Keypress
+				BSET 2, KBISC
+				RTI		
+			
+			
+			

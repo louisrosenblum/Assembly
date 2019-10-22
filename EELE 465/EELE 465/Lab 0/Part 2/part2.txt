@@ -1,0 +1,67 @@
+;Main.s by Anthony Louis Rosenblum and Abby Stroh
+;1/16/19
+;Lab 0
+
+; External code import and setup
+
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main, go
+		XREF __SEG_END_SSTACK
+		
+		
+;Declaring variables
+		ORG $0060
+		ORG $E000
+
+		
+		
+main:
+_Startup:
+		
+		; Set LEDs as outputs
+		BSET 6, PTBDD
+		BSET 7, PTBDD
+		
+		;Disable Watchdawg
+		LDA SOPT1
+		AND #%01111111
+		STA SOPT1
+		
+		; Interupts enabled, use bus rate clock, 128 prescaler
+		LDA #%01001111
+		STA TPMSC
+		
+		; No input capture, no interupt requests, edge aligned PWM mode
+		LDA #%00101000
+		STA TPMC0SC
+		
+		
+		
+		; 4E20 = 20,000
+		LDA #$4E
+		STA TPMMODH
+		
+		LDA #$20
+		STA TPMMODL
+
+
+		CLI
+
+
+mainLoop:
+		NOP
+		BRA mainLoop
+
+go: 
+		; Toggle overflow flag
+		LDA TPMSC
+		EOR #%10000000
+		STA TPMSC
+		
+		; Toggle both LEDs
+		LDA PTBD
+		EOR #%11000000
+		STA PTBD
+		
+		RTI
+	

@@ -1,0 +1,195 @@
+*** EVALUATION ***
+PROGRAM "EELE465_Lab2_slaveLCD.abs"
+
+*********************************************************************************************
+TARGET SECTION
+---------------------------------------------------------------------------------------------
+Processor   : Freescale HC08
+Memory Model: SMALL
+File Format : ELF\DWARF 2.0
+Linker      : SmartLinker V-5.0.51 Build 14019, Jan 20 2014
+
+*********************************************************************************************
+FILE SECTION
+---------------------------------------------------------------------------------------------
+main_asm.obj                            Model: SMALL,         Lang: Assembler
+
+*********************************************************************************************
+STARTUP SECTION
+---------------------------------------------------------------------------------------------
+Entry point: 0xE000 (_Startup)
+
+*********************************************************************************************
+SECTION-ALLOCATION SECTION
+Section Name                    Size  Type     From       To       Segment
+---------------------------------------------------------------------------------------------
+main_asm__ORG00001                 6   R/W      0x120      0x125   .absSeg0
+main_asm__ORG00002               600     R     0xE000     0xE257   .absSeg1
+.stack                            64   R/W      0x100      0x13F   RAM
+.vectSeg2_vect                     2     R     0xFFDC     0xFFDD   .vectSeg2
+.vectSeg3_vect                     2     R     0xFFFE     0xFFFF   .vectSeg3
+
+Summary of section sizes per section type:
+READ_ONLY (R):         25C (dec:      604)
+READ_WRITE (R/W):       46 (dec:       70)
+
+*********************************************************************************************
+VECTOR-ALLOCATION SECTION
+    Address     InitValue   InitFunction
+---------------------------------------------------------------------------------------------
+     0xFFDC        0xE0BD   _Viic
+     0xFFFE        0xE000   _Startup
+
+*********************************************************************************************
+OBJECT-ALLOCATION SECTION
+     Name               Module                 Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+MODULE:                 -- main_asm.obj --
+- PROCEDURES:
+     _Startup                                  E000      AE     174       0   .init       
+     main                                      E000       0       0       0   .init       
+     IIC_Startup_slave                         E0AE       F      15       0   .init       
+     _Viic                                     E0BD       9       9       0   .init       
+     Viic_slave                                E0C6       A      10       0   .init       
+     Viic_slave_iaas                           E0D0       8       8       0   .init       
+     Viic_slave_iaas2                          E0D8       7       7       0   .init       
+     Viic_slave_srw                            E0DF       8       8       0   .init       
+     Viic_slave_setTx                          E0E7       F      15       0   .init       
+     Viic_slave_setRx                          E0F6       A      10       0   .init       
+     Viic_slave_txRx                           E100       8       8       0   .init       
+     Viic_slave_ack                            E108       8       8       0   .init       
+     Viic_slave_read                           E110       E      14       0   .init       
+     LCD_Write                                 E11E      11      17       0   .init       
+     LCD_ADDR                                  E12F      13      19       0   .init       
+     mainLoop3                                 E142      27      39       0   .init       
+     alpha                                     E169       9       9       0   .init       
+     bravo                                     E172       9       9       0   .init       
+     charlie                                   E17B       9       9       0   .init       
+     delta                                     E184       9       9       0   .init       
+     ekko                                      E18D       9       9       0   .init       
+     foxtrot                                   E196       9       9       0   .init       
+     uno                                       E19F       9       9       0   .init       
+     dos                                       E1A8       9       9       0   .init       
+     tres                                      E1B1       9       9       0   .init       
+     mainLoop4                                 E1BA      25      37       0   .init       
+     cuatro                                    E1DF       9       9       0   .init       
+     cinco                                     E1E8       9       9       0   .init       
+     seis                                      E1F1       9       9       0   .init       
+     siete                                     E1FA       9       9       0   .init       
+     ocho                                      E203       9       9       0   .init       
+     nueve                                     E20C       9       9       0   .init       
+     zero                                      E215       9       9       0   .init       
+     delay_16                                  E21E       C      12       0   .init       
+     delay_16_2                                E22A       9       9       0   .init       
+     delay_4                                   E233       C      12       0   .init       
+     delay_4_2                                 E23F       9       9       0   .init       
+     delay_point_one                           E248      10      16       0   .init       
+- VARIABLES:
+     IIC_addr                                   120       1       1       0   .text       
+     msgLength                                  121       1       1       0   .text       
+     current                                    122       1       1       0   .text       
+     IIC_MSG                                    123       1       1       0   .text       
+     Storage                                    124       1       1       0   .text       
+     Storage2                                   125       1       1       0   .text       
+- LABELS:
+     __SEG_END_SSTACK                           140       0       0       1               
+
+*********************************************************************************************
+MODULE STATISTIC
+  Name                                      Data   Code  Const
+---------------------------------------------------------------------------------------------
+  main_asm.obj                                 6    600      0
+  other                                       64      4      0
+
+*********************************************************************************************
+SECTION USE IN OBJECT-ALLOCATION SECTION
+---------------------------------------------------------------------------------------------
+SECTION: ".text"
+  IIC_addr msgLength current IIC_MSG Storage Storage2 
+SECTION: ".init"
+  main _Startup IIC_Startup_slave _Viic Viic_slave Viic_slave_iaas 
+  Viic_slave_iaas2 Viic_slave_srw Viic_slave_setTx Viic_slave_setRx 
+  Viic_slave_txRx Viic_slave_ack Viic_slave_read LCD_Write LCD_ADDR mainLoop3 
+  alpha bravo charlie delta ekko foxtrot uno dos tres mainLoop4 cuatro cinco 
+  seis siete ocho nueve zero delay_16 delay_16_2 delay_4 delay_4_2 
+  delay_point_one 
+
+*********************************************************************************************
+OBJECT LIST SORTED BY ADDRESS
+     Name                                      Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+     IIC_addr                                   120       1       1       0   .text       
+     msgLength                                  121       1       1       0   .text       
+     current                                    122       1       1       0   .text       
+     IIC_MSG                                    123       1       1       0   .text       
+     Storage                                    124       1       1       0   .text       
+     Storage2                                   125       1       1       0   .text       
+     main                                      E000       0       0       0   .init       
+     _Startup                                  E000      AE     174       0   .init       
+     IIC_Startup_slave                         E0AE       F      15       0   .init       
+     _Viic                                     E0BD       9       9       0   .init       
+     Viic_slave                                E0C6       A      10       0   .init       
+     Viic_slave_iaas                           E0D0       8       8       0   .init       
+     Viic_slave_iaas2                          E0D8       7       7       0   .init       
+     Viic_slave_srw                            E0DF       8       8       0   .init       
+     Viic_slave_setTx                          E0E7       F      15       0   .init       
+     Viic_slave_setRx                          E0F6       A      10       0   .init       
+     Viic_slave_txRx                           E100       8       8       0   .init       
+     Viic_slave_ack                            E108       8       8       0   .init       
+     Viic_slave_read                           E110       E      14       0   .init       
+     LCD_Write                                 E11E      11      17       0   .init       
+     LCD_ADDR                                  E12F      13      19       0   .init       
+     mainLoop3                                 E142      27      39       0   .init       
+     alpha                                     E169       9       9       0   .init       
+     bravo                                     E172       9       9       0   .init       
+     charlie                                   E17B       9       9       0   .init       
+     delta                                     E184       9       9       0   .init       
+     ekko                                      E18D       9       9       0   .init       
+     foxtrot                                   E196       9       9       0   .init       
+     uno                                       E19F       9       9       0   .init       
+     dos                                       E1A8       9       9       0   .init       
+     tres                                      E1B1       9       9       0   .init       
+     mainLoop4                                 E1BA      25      37       0   .init       
+     cuatro                                    E1DF       9       9       0   .init       
+     cinco                                     E1E8       9       9       0   .init       
+     seis                                      E1F1       9       9       0   .init       
+     siete                                     E1FA       9       9       0   .init       
+     ocho                                      E203       9       9       0   .init       
+     nueve                                     E20C       9       9       0   .init       
+     zero                                      E215       9       9       0   .init       
+     delay_16                                  E21E       C      12       0   .init       
+     delay_16_2                                E22A       9       9       0   .init       
+     delay_4                                   E233       C      12       0   .init       
+     delay_4_2                                 E23F       9       9       0   .init       
+     delay_point_one                           E248      10      16       0   .init       
+
+*********************************************************************************************
+UNUSED-OBJECTS SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+COPYDOWN SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+OBJECT-DEPENDENCIES SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+DEPENDENCY TREE
+*********************************************************************************************
+ main and _Startup Group
+ | 
+ +- main                
+ |    
+ +- _Startup            
+      
+*********************************************************************************************
+STATISTIC SECTION
+---------------------------------------------------------------------------------------------
+
+ExeFile:
+--------
+Number of blocks to be downloaded: 3
+Total size of all blocks to be downloaded: 604
+

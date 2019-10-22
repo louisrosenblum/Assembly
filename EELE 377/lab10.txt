@@ -1,0 +1,38 @@
+;Main.s by Anthony Louis Rosenblum and Ben Crellin
+;11/15/18
+;Lab 10
+
+; External code import and setup
+
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main
+		XREF __SEG_END_SSTACK
+		
+		
+;Declaring variables
+		ORG $0060
+		ORG $E000
+
+		
+		
+main:
+_Startup:
+
+		;Disable Watchdawg
+		LDA SOPT1
+		AND #%01111111
+		STA SOPT1
+
+mainLoop:
+		MOV #$07, TPMMODH
+		MOV #$D0, TPMMODL
+
+		MOV #$0F, TPMC0VH
+		MOV #$A0, TPMC0VL
+		
+		MOV #%00100000, TPMC0SC
+		
+		MOV #%00000000, TPMSC
+		
+		
+		BRA mainLoop

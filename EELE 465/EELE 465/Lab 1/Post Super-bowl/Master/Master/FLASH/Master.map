@@ -1,0 +1,151 @@
+*** EVALUATION ***
+PROGRAM "Master.abs"
+
+*********************************************************************************************
+TARGET SECTION
+---------------------------------------------------------------------------------------------
+Processor   : Freescale HC08
+Memory Model: SMALL
+File Format : ELF\DWARF 2.0
+Linker      : SmartLinker V-5.0.53 Build 17146, May 27 2017
+
+*********************************************************************************************
+FILE SECTION
+---------------------------------------------------------------------------------------------
+main_asm.obj                            Model: SMALL,         Lang: Assembler,     Compiler Version: Assembler for HC08 V-5.0.30 Build 17146, May 27 2017
+
+*********************************************************************************************
+STARTUP SECTION
+---------------------------------------------------------------------------------------------
+Entry point: 0xE000 (_Startup)
+
+*********************************************************************************************
+SECTION-ALLOCATION SECTION
+Section Name                    Size  Type     From       To       Segment
+---------------------------------------------------------------------------------------------
+main_asm__ORG00001                 5   R/W       0x60       0x64   .absSeg0
+main_asm__ORG00002               180     R     0xE000     0xE0B3   .absSeg1
+.stack                            64   R/W      0x100      0x13F   RAM
+.vectSeg2_vect                     2     R     0xFFDC     0xFFDD   .vectSeg2
+.vectSeg3_vect                     2     R     0xFFFE     0xFFFF   .vectSeg3
+
+Summary of section sizes per section type:
+READ_ONLY (R):          B8 (dec:      184)
+READ_WRITE (R/W):       45 (dec:       69)
+
+*********************************************************************************************
+VECTOR-ALLOCATION SECTION
+    Address     InitValue   InitFunction
+---------------------------------------------------------------------------------------------
+     0xFFDC        0xE030   _Viic
+     0xFFFE        0xE000   _Startup
+
+*********************************************************************************************
+OBJECT-ALLOCATION SECTION
+     Name               Module                 Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+MODULE:                 -- main_asm.obj --
+- PROCEDURES:
+     _Startup                                  E000      1E      30       0   .init       
+     main                                      E000       0       0       0   .init       
+     mainLoop                                  E01E      12      18       0   .init       
+     _Viic                                     E030       6       6       0   .init       
+     Viic_master                               E036       5       5       0   .init       
+     Viic_master_TX                            E03B       B      11       0   .init       
+     Viic_master_rxAck                         E046       6       6       0   .init       
+     Viic_master_EoAC                          E04C      10      16       0   .init       
+     Viic_master_toRxMode                      E05C       5       5       0   .init       
+     Viic_master_RX                            E061       B      11       0   .init       
+     Viic_master_rxStop                        E06C       4       4       0   .init       
+     Viic_master_txAck                         E070       4       4       0   .init       
+     Viic_master_readData                      E074       D      13       0   .init       
+     IIC_Startup_Master                        E081       9       9       0   .init       
+     IIC_DataWrite                             E08A       D      13       0   .init       
+     Delay                                     E097       5       5       0   .init       
+     loop1                                     E09C       5       5       0   .init       
+     loop2                                     E0A1      13      19       0   .init       
+- VARIABLES:
+     FullKeypad                                  60       1       1       0   .text       
+     IIC_addr                                    61       1       1       0   .text       
+     msgLength                                   62       1       1       0   .text       
+     current                                     63       1       1       0   .text       
+     IIC_msg                                     64       1       1       0   .text       
+- LABELS:
+     __SEG_END_SSTACK                           140       0       0       1               
+
+*********************************************************************************************
+MODULE STATISTIC
+  Name                                      Data   Code  Const
+---------------------------------------------------------------------------------------------
+  main_asm.obj                                 5    180      0
+  other                                       64      4      0
+
+*********************************************************************************************
+SECTION USE IN OBJECT-ALLOCATION SECTION
+---------------------------------------------------------------------------------------------
+SECTION: ".text"
+  FullKeypad IIC_addr msgLength current IIC_msg 
+SECTION: ".init"
+  main _Startup mainLoop _Viic Viic_master Viic_master_TX Viic_master_rxAck 
+  Viic_master_EoAC Viic_master_toRxMode Viic_master_RX Viic_master_rxStop 
+  Viic_master_txAck Viic_master_readData IIC_Startup_Master IIC_DataWrite Delay 
+  loop1 loop2 
+
+*********************************************************************************************
+OBJECT LIST SORTED BY ADDRESS
+     Name                                      Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+     FullKeypad                                  60       1       1       0   .text       
+     IIC_addr                                    61       1       1       0   .text       
+     msgLength                                   62       1       1       0   .text       
+     current                                     63       1       1       0   .text       
+     IIC_msg                                     64       1       1       0   .text       
+     main                                      E000       0       0       0   .init       
+     _Startup                                  E000      1E      30       0   .init       
+     mainLoop                                  E01E      12      18       0   .init       
+     _Viic                                     E030       6       6       0   .init       
+     Viic_master                               E036       5       5       0   .init       
+     Viic_master_TX                            E03B       B      11       0   .init       
+     Viic_master_rxAck                         E046       6       6       0   .init       
+     Viic_master_EoAC                          E04C      10      16       0   .init       
+     Viic_master_toRxMode                      E05C       5       5       0   .init       
+     Viic_master_RX                            E061       B      11       0   .init       
+     Viic_master_rxStop                        E06C       4       4       0   .init       
+     Viic_master_txAck                         E070       4       4       0   .init       
+     Viic_master_readData                      E074       D      13       0   .init       
+     IIC_Startup_Master                        E081       9       9       0   .init       
+     IIC_DataWrite                             E08A       D      13       0   .init       
+     Delay                                     E097       5       5       0   .init       
+     loop1                                     E09C       5       5       0   .init       
+     loop2                                     E0A1      13      19       0   .init       
+
+*********************************************************************************************
+UNUSED-OBJECTS SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+COPYDOWN SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+OBJECT-DEPENDENCIES SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+DEPENDENCY TREE
+*********************************************************************************************
+ main and _Startup Group
+ | 
+ +- main                
+ |    
+ +- _Startup            
+      
+*********************************************************************************************
+STATISTIC SECTION
+---------------------------------------------------------------------------------------------
+
+ExeFile:
+--------
+Number of blocks to be downloaded: 3
+Total size of all blocks to be downloaded: 184
+

@@ -1,0 +1,65 @@
+;Louis Rosenblum and Abby Stroh
+;3/5/2019
+;Lab 3
+;SCI Code
+
+
+            INCLUDE 'derivative.inc'
+            XDEF _Startup, main
+            XREF __SEG_END_SSTACK 
+            
+		ORG $0060
+
+		SCI_msg: DC.B "0"
+
+		ORG $E000
+
+main:
+_Startup:
+            LDHX   #__SEG_END_SSTACK ; initialize the stack pointer
+            TXS
+            
+			CLI			; enable interrupts
+			
+			; Disable Watchdawg
+			LDA SOPT1 
+			AND #%01111111
+			STA SOPT1
+			
+			LDA #$1A
+			STA SCIBD
+			
+			LDA #%00000100
+			STA SCIC1
+			
+			LDA #%00001100
+			STA SCIC2
+			
+			LDA #%00000100
+			STA SCIS2
+			
+			LDA #%01110000
+			STA SCIC3
+			
+			LDA #%10000000
+			STA PTBDD
+			
+			LDA #$00
+			STA PTAPE
+			
+			LDA #%00000010
+			STA SOPT1
+			
+			
+mainLoop:
+	READ:
+			BRCLR 5, SCIS1, READ
+			LDA SCID
+			STA SCI_msg
+			BRA WRITE
+	WRITE:
+			BRCLR 7, SCIS1, WRITE
+			LDA SCI_msg
+			STA SCID
+			
+			BRA mainLoop

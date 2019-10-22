@@ -1,0 +1,161 @@
+;Lab 1 by Anthony Louis Rosenblum and Abby Stroh
+;1/22/19
+
+
+; External code import and setup
+
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main, key_press
+		XREF __SEG_END_SSTACK
+		
+		
+;Declaring variables
+		ORG $0060
+		ORG $E000
+
+		
+		
+main:
+_Startup:
+
+			;Disable Watchdawg
+			LDA SOPT1
+			AND #%01111111
+			STA SOPT1
+			
+			; I2C
+			
+			; 1 SDA on PTB6, SCL on PTB7
+			LDA %10000011
+			STA SOPT2
+			
+			; PTB6 and 7 Outputs
+			LDA #%11000000
+			STA PTBDD
+			
+			JSR IIC_Startup_master
+			
+			
+			; Enable interrupts for PTAD 0-3
+			LDA #%00001111
+			STA KBIPE
+			
+			; Rising edge sensitive
+			LDA #%00001111
+			STA KBIES
+		
+			; Columns are inputs
+			BCLR 0, PTADD
+			BCLR 1, PTADD
+			BCLR 2, PTADD
+			BCLR 3, PTADD
+			
+			; Rows are outputs
+			BSET 2, PTBDD
+			BSET 3, PTBDD
+			BSET 4, PTBDD
+			BSET 5, PTBDD
+				
+			; Disable PTAPE
+			LDA #$00
+			STA PTAPE
+		
+			; Enable keyboard interupts
+			LDA #%00000010
+			STA KBISC
+			
+			CLI			; enable interrupts
+			
+			LDA #%11110
+
+mainLoop:
+
+			LDA #$FF
+			STA $0060
+			STA $0061
+			
+           	JSR row1
+           	JSR row2
+           	JSR row3
+           	JSR row4
+           	
+      
+            BRA mainLoop
+            
+ 
+IIC_Startup_master:\
+	;initialize slave settings
+
+	;set baud rate 50kbps
+	LDA #%10000111
+	STA IICF
+	
+	;set slave address
+	LDA #$10
+	STA IICA
+	
+	;enable IIC and Interrupts
+	BSET IICC_IICEN, IICC
+	BSET IICC_IICIE, IICC
+	BSET IICC_MST, IICC
+	RTS
+ 
+ 
+            
+key_press:
+		LDA PTAD
+		STA $0060
+		
+		
+		BSET 2, KBISC
+		RTI
+		
+row1:
+		LDA #%00000100
+		STA PTBD
+		JSR sleep
+		RTS
+
+row2:
+		LDA #%00001000
+		STA PTBD
+		JSR sleep
+		RTS
+
+row3:
+		LDA #%00010000
+		STA PTBD
+		JSR sleep
+		RTS
+
+row4:
+		LDA #%00100000
+		STA PTBD
+		JSR sleep
+		RTS
+		
+sleep:
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+		
+		
+
+
+
+		
+		
+
+		
+		
+
+

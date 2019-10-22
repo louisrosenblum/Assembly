@@ -1,0 +1,105 @@
+;Madison Martinsen
+;1/30/19
+;Keypad
+
+
+	INCLUDE 'derivative.inc'
+	XDEF _Startup, main
+	XDEF _Vkeyboard_ISR
+	XREF __SEG_END_SSTACK
+	
+
+*----RAM Variables (Start of RAM)----
+	ORG $0060
+Keypress: DS.B 1	
+	
+*----ROM Variables (start of ROM)---
+	ORG $E000
+
+main:
+	 _Startup:
+	 		LDHX #__SEG_END_SSTACK ;Initialize the stack pointer
+			TXS ;Transfer Index Register to SP
+	 			
+*----Turn off Watchdog-----------------------------------
+	 		LDA SOPT1
+			AND #%01111111
+			STA SOPT1
+			
+*----Initialize Variables--------------------------------
+			CLR Keypress
+			
+*----Enable Inerupts-------------------------------------
+	 		CLI
+			
+*----Disable Pullup Resistors----------------------------
+			LDA #%00000000
+			STA PTAPE
+			
+*----Enable Keyboard Interrupts--------------------------
+			BSET 1, KBISC
+
+*----SET pins as inputs----------
+			LDA #%00001111 ;Setting PTA0,1,2,3 as inputs
+			STA KBIPE
+
+*----SET pins as outputs and to HIGH state----
+			BSET 2, PTBDD
+			BSET 3,	PTBDD
+			BSET 4, PTBDD
+			BSET 5, PTBDD
+			
+			BSET 2, PTBD
+			BSET 3,	PTBD
+			BSET 4, PTBD
+			BSET 5, PTBD
+			
+*----Swtich ports----
+			BCLR 0, PTADD
+			BCLR 1, PTADD
+			BCLR 2, PTADD
+			BCLR 3, PTADD
+			
+	mainLoop:
+	
+			pressLoop:
+				BRCLR 0, Keypress, Loop1
+				BRCLR 1, Keypress, Loop2
+				BRCLR 2, Keypress, Loop3
+				BRCLR 3, Keypress, Loop4
+				
+				BRA pressLoop
+	
+			BRA mainLoop
+			
+			
+	Loop1:
+			NOP
+			NOP
+			NOP
+			BRA mainLoop
+	Loop2:
+			NOP
+			NOP
+			NOP
+			BRA mainLoop
+	Loop3:
+			NOP
+			NOP
+			NOP
+			BRA mainLoop
+	Loop4:
+			NOP
+			NOP
+			NOP
+			BRA mainLoop
+			
+			
+_Vkeyboard_ISR:
+				LDA PTAD
+				STA Keypress
+				BSET 2, KBISC
+				RTI		
+			
+			
+			

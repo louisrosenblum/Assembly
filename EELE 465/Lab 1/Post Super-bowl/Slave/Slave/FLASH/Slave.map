@@ -1,0 +1,150 @@
+*** EVALUATION ***
+PROGRAM "Slave.abs"
+
+*********************************************************************************************
+TARGET SECTION
+---------------------------------------------------------------------------------------------
+Processor   : Freescale HC08
+Memory Model: SMALL
+File Format : ELF\DWARF 2.0
+Linker      : SmartLinker V-5.0.53 Build 17146, May 27 2017
+
+*********************************************************************************************
+FILE SECTION
+---------------------------------------------------------------------------------------------
+main_asm.obj                            Model: SMALL,         Lang: Assembler,     Compiler Version: Assembler for HC08 V-5.0.30 Build 17146, May 27 2017
+
+*********************************************************************************************
+STARTUP SECTION
+---------------------------------------------------------------------------------------------
+Entry point: 0xE000 (_Startup)
+
+*********************************************************************************************
+SECTION-ALLOCATION SECTION
+Section Name                    Size  Type     From       To       Segment
+---------------------------------------------------------------------------------------------
+.init                            167     R     0xE000     0xE0A6   ROM
+main_asm._SEC000000                4   R/W      0x100      0x103   RAM
+.stack                            64   R/W      0x104      0x143   RAM
+.vectSeg0_vect                     2     R     0xFFDC     0xFFDD   .vectSeg0
+.vectSeg1_vect                     2     R     0xFFFE     0xFFFF   .vectSeg1
+
+Summary of section sizes per section type:
+READ_ONLY (R):          AB (dec:      171)
+READ_WRITE (R/W):       44 (dec:       68)
+
+*********************************************************************************************
+VECTOR-ALLOCATION SECTION
+    Address     InitValue   InitFunction
+---------------------------------------------------------------------------------------------
+     0xFFDC        0xE046   _Viic
+     0xFFFE        0xE000   _Startup
+
+*********************************************************************************************
+OBJECT-ALLOCATION SECTION
+     Name               Module                 Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+MODULE:                 -- main_asm.obj --
+- PROCEDURES:
+     _Startup                                  E000      1B      27       0   .init       
+     main                                      E000       0       0       0   .init       
+     mainLoop                                  E01B      11      17       0   .init       
+     LED                                       E02C       B      11       0   .init       
+     IIC_Startup_slave                         E037       F      15       1   .init       
+     _Viic                                     E046       9       9       0   .init       
+     Viic_slave                                E04F       A      10       0   .init       
+     Viic_slave_iaas                           E059       8       8       0   .init       
+     Viic_slave_iaas2                          E061       7       7       0   .init       
+     Viic_slave_srw                            E068       8       8       0   .init       
+     Viic_slave_setTx                          E070       F      15       0   .init       
+     Viic_slave_setRx                          E07F       A      10       0   .init       
+     Viic_slave_txRx                           E089       8       8       0   .init       
+     Viic_slave_ack                            E091       8       8       0   .init       
+     Viic_slave_read                           E099       E      14       0   .init       
+- VARIABLES:
+     IIC_addr                                   100       1       1       0   main_asm._SEC000000
+     msgLength                                  101       1       1       0   main_asm._SEC000000
+     current                                    102       1       1       5   main_asm._SEC000000
+     IIC_MSG                                    103       1       1       4   main_asm._SEC000000
+- LABELS:
+     __SEG_END_SSTACK                           144       0       0       1               
+
+*********************************************************************************************
+MODULE STATISTIC
+  Name                                      Data   Code  Const
+---------------------------------------------------------------------------------------------
+  main_asm.obj                                 4    167      0
+  other                                       64      4      0
+
+*********************************************************************************************
+SECTION USE IN OBJECT-ALLOCATION SECTION
+---------------------------------------------------------------------------------------------
+SECTION: ".init"
+  main _Startup mainLoop LED IIC_Startup_slave _Viic Viic_slave 
+  Viic_slave_iaas Viic_slave_iaas2 Viic_slave_srw Viic_slave_setTx 
+  Viic_slave_setRx Viic_slave_txRx Viic_slave_ack Viic_slave_read 
+SECTION: "main_asm._SEC000000"
+  IIC_addr msgLength current IIC_MSG 
+
+*********************************************************************************************
+OBJECT LIST SORTED BY ADDRESS
+     Name                                      Addr   hSize   dSize     Ref    Section   RLIB
+---------------------------------------------------------------------------------------------
+     IIC_addr                                   100       1       1       0   main_asm._SEC000000
+     msgLength                                  101       1       1       0   main_asm._SEC000000
+     current                                    102       1       1       5   main_asm._SEC000000
+     IIC_MSG                                    103       1       1       4   main_asm._SEC000000
+     main                                      E000       0       0       0   .init       
+     _Startup                                  E000      1B      27       0   .init       
+     mainLoop                                  E01B      11      17       0   .init       
+     LED                                       E02C       B      11       0   .init       
+     IIC_Startup_slave                         E037       F      15       1   .init       
+     _Viic                                     E046       9       9       0   .init       
+     Viic_slave                                E04F       A      10       0   .init       
+     Viic_slave_iaas                           E059       8       8       0   .init       
+     Viic_slave_iaas2                          E061       7       7       0   .init       
+     Viic_slave_srw                            E068       8       8       0   .init       
+     Viic_slave_setTx                          E070       F      15       0   .init       
+     Viic_slave_setRx                          E07F       A      10       0   .init       
+     Viic_slave_txRx                           E089       8       8       0   .init       
+     Viic_slave_ack                            E091       8       8       0   .init       
+     Viic_slave_read                           E099       E      14       0   .init       
+
+*********************************************************************************************
+UNUSED-OBJECTS SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+COPYDOWN SECTION
+---------------------------------------------------------------------------------------------
+
+*********************************************************************************************
+OBJECT-DEPENDENCIES SECTION
+---------------------------------------------------------------------------------------------
+_Startup                  USES __SEG_END_SSTACK IIC_Startup_slave 
+mainLoop                  USES IIC_MSG 
+LED                       USES IIC_MSG 
+Viic_slave_setTx          USES current IIC_MSG 
+Viic_slave_setRx          USES current 
+Viic_slave_read           USES current IIC_MSG 
+
+*********************************************************************************************
+DEPENDENCY TREE
+*********************************************************************************************
+ main and _Startup Group
+ | 
+ +- main                
+ |    
+ +- _Startup            
+    | 
+    +- IIC_Startup_slave   
+         
+*********************************************************************************************
+STATISTIC SECTION
+---------------------------------------------------------------------------------------------
+
+ExeFile:
+--------
+Number of blocks to be downloaded: 3
+Total size of all blocks to be downloaded: 171
+

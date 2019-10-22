@@ -1,0 +1,116 @@
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main, KeyInt
+		XREF __SEG_END_SSTACK
+
+			ORG $0060		
+KEYPRESS DS.B 1
+			ORG $0080
+DUDE DS.B 1
+			ORG $E000
+
+		
+		
+main:
+_Startup:
+		;Disable Watchdawg
+		LDA SOPT1
+		AND #%01111111
+		STA SOPT1
+		
+		; Set LED output, switch input
+		BSET 6, PTBDD
+		BSET 7, PTBDD
+		BCLR 2, PTADD
+		BCLR 3, PTADD
+		
+		; Set LED off
+		LDA #$00
+		STA PTBD
+		
+		; Disable PTAPE
+		LDA #$00
+		STA PTAPE
+		
+		; Falling edge sensitive
+		LDA #$00
+		STA KBIES
+		
+		; KBIP inputs
+		BCLR 2, KBIES
+		BCLR 3, KBIES
+		
+		;KBIPE
+		LDA #%00001100
+		STA KBIPE
+		
+		; Enable keyboard interupts
+		LDA #%00000010
+		STA KBISC
+		
+		LDA #$FF
+		STA KEYPRESS
+		CLI
+mainLoop:
+		LDA #$FF
+		STA $0090
+		STA $0091
+		STA $0093
+		
+		
+		LDA #$AA
+		STA $0092
+		
+		
+		BRCLR 2, KEYPRESS, blink
+		BRCLR 3, KEYPRESS, blinkfast
+		
+		BRA mainLoop
+		
+blink:
+		LDA $0090
+		DECA
+		STA $0090
+		BEQ toggle
+		delay:
+			LDA $0091
+			DECA
+			STA $0091
+			BEQ blink
+			BRA delay
+
+toggle:
+	LDA PTBD
+	EOR #%10000000
+	STA PTBD
+	MOV $FF, $0090
+	MOV $FF, $0091
+	BSET 6, PTBD
+	BRA mainLoop
+	
+blinkfast:
+		LDA $0092
+		DECA
+		STA $0092
+		BEQ togglefast
+			delay1:
+				LDA $0093
+				DECA
+				STA $0093
+				BEQ blinkfast
+				BRA delay1
+		
+togglefast:
+	LDA PTBD
+	EOR #%01000000
+	STA PTBD
+	MOV $AA, $0092
+	MOV $FF, $0093
+	BSET 7, PTBD
+	BRA mainLoop
+		
+	
+KeyInt:
+		LDA PTAD
+		STA KEYPRESS
+		BSET 2, KBISC
+		RTI	

@@ -1,0 +1,72 @@
+;Lab 0 by Anthony Louis Rosenblum
+;1/15/19
+;Simple program to toggle LED1 on the MC9S08QG8
+
+; External code import and setup
+
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main
+		XREF __SEG_END_SSTACK
+		
+main:
+_Startup:
+		;Setting PTB6 and 7 to outputs
+		BSET 6, PTBDD
+		BSET 7, PTBDD
+		
+		;Disable Watchdawg
+		LDA SOPT1
+		AND #%01111111
+		STA SOPT1
+		
+		LDA #$FF
+		STA $0060
+		LDA #$C8 
+		STA $0061
+		LDA #$06
+		STA $0062
+		
+		
+mainLoop:
+		LDA $0060
+		DECA
+		STA $0060
+		BEQ toggle
+		BRA mainLoop
+		
+toggle:
+		LDA $0061
+		DECA
+		STA $0061
+		BEQ toggle2
+		LDA #$FF
+		STA $0060
+		BRA mainLoop
+		
+toggle2:
+		LDA $0062
+		DECA
+		STA $0062
+		BEQ flash
+		
+		LDA #$C8
+		STA $0061
+		BRA mainLoop
+		
+		
+		
+flash:
+		LDA PTBD
+		EOR #%11000000
+		STA PTBD
+		
+		LDA #$FF
+		STA $0060
+		LDA #$C8 
+		STA $0061
+		LDA #$06
+		STA $0062
+		
+		BRA mainLoop
+
+		

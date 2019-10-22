@@ -1,0 +1,203 @@
+;Main.s by Anthony Louis Rosenblum and Ben Crellin
+;10/22/18
+;Lab 7
+
+; External code import and setup
+
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main
+		XREF __SEG_END_SSTACK
+		
+		
+;Declaring variables
+SCL EQU 7
+SDA EQU 6
+DACADDR EQU %11010000
+DACADDR2 EQU %11010001
+		ORG $0060
+BitCounter DS.B 1
+Value DS.B 1
+Direction DS.B 1
+		ORG $E000
+
+		
+		
+main:
+_Startup:
+
+		;Disable Watchdawg
+		LDA SOPT1
+		AND #%01111111
+		STA SOPT1
+		
+		
+		
+		CLR Value
+		CLR BitCounter
+		CLR Direction
+		
+		;Setting PTBD and output setting
+		
+		BSET SDA, PTBD
+		BSET SCL, PTBD
+		
+		
+		BSET 6, PTBDD
+		BSET 7, PTBDD
+		
+		;Write to slave at 00h
+		JSR I2CStartBit
+		LDA #DACADDR
+		JSR I2CTxByte
+		LDA #$00
+		JSR I2CTxByte
+		
+		;Send 00s to first three memory locations
+		LDA #$05	
+		JSR I2CTxByte
+		LDA #$05
+		JSR I2CTxByte
+		LDA #$05
+		JSR I2CTxByte
+		JSR I2CStopBit
+
+SendIt:
+		; Raise data and clock lines for repeated start
+		
+		
+		;BSET SDA, PTBD
+		;BSET SCL, PTBD
+		
+		JSR I2CStartBit
+		
+		; Repeated write at 00h
+		LDA #DACADDR
+		JSR I2CTxByte
+		LDA #$00
+		JSR I2CTxByte
+		
+		; Raise data and clock lines for repeated start 
+		BSET SDA, PTBD
+		BSET SCL, PTBD
+		JSR I2CStartBit
+		
+		; Begin reading
+		
+		LDA #DACADDR2
+		JSR I2CTxByte
+		
+		BCLR SDA, PTBDD
+		JSR I2CRxByte
+		
+		JSR I2CStopBit
+		
+		JSR I2CBitDelay
+		BRA SendIt
+		
+		
+I2CTxByte:
+
+		LDX #$08
+		STX BitCounter
+		
+
+		
+I2CNextBit:
+		ROLA
+		BCC SendLow
+		
+SendHigh:
+
+		BSET SDA, PTBD
+		JSR I2CSetupDelay
+		BSET SCL, PTBD
+		JSR I2CBitDelay
+		BRA I2CTxCont
+		
+SendLow:
+		BCLR SDA, PTBD
+		JSR I2CSetupDelay
+		BSET SCL, PTBD
+		JSR I2CBitDelay
+		
+I2CTxCont:
+		BCLR SCL, PTBD
+		DEC BitCounter
+		BEQ I2CAckPoll
+		BRA I2CNextBit
+		
+		
+		; Change 2nd line BCLR next week
+I2CAckPoll:
+		BSET SDA, PTBD
+		BCLR SDA, PTBD
+		JSR I2CSetupDelay
+		BSET SCL, PTBD
+		JSR I2CBitDelay
+		BRSET SDA, PTBD, I2CNoAck
+		
+		BCLR SCL, PTBD
+		BSET SDA, PTBDD
+		RTS
+		
+I2CNoAck:
+		BCLR SCL, PTBD
+		BSET SDA, PTBDD
+		RTS
+		
+I2CStartBit:
+		BCLR SDA, PTBD
+		JSR I2CBitDelay
+		BCLR SCL, PTBD
+		RTS
+		
+I2CStopBit:
+		BCLR SDA, PTBD
+		BSET SCL, PTBD
+		BSET SDA, PTBD
+		JSR I2CBitDelay
+		RTS
+		
+
+		
+I2CSetupDelay:
+		NOP
+		NOP
+		RTS
+		
+I2CBitDelay:
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+
+I2CRxByte:
+
+		I2CTxByte1:
+
+		LDX #$08
+		STX BitCounter
+		
+		I2CNextBit1:
+		ROLA
+		BCC SendLow1
+		
+		SendHigh1:
+		JSR I2CSetupDelay
+		BSET SCL, PTBD
+		JSR I2CBitDelay
+		BRA I2CTxCont1
+		
+		SendLow1:
+		JSR I2CSetupDelay
+		JSR I2CBitDelay
+		
+		I2CTxCont1:
+		DEC BitCounter
+		BEQ I2CAckPoll
+		BRA I2CNextBit
+		
+		

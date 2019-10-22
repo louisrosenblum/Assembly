@@ -1,0 +1,279 @@
+;Lab 1 by Anthony Louis Rosenblum and Abby Stroh
+;1/22/19
+
+
+; External code import and setup
+
+		INCLUDE 'derivative.inc'
+		XDEF _Startup, main, key_press
+		XREF __SEG_END_SSTACK
+		
+		
+;Declaring variables
+		ORG $0080
+		
+		icky_add: DS.B 1 ; IIC addy
+		length: DS.B 1 ; MSG LENGTH
+		current: DS.B 1 ; which byte
+		icky_msg: DS.B 4; 32 bit transmission
+		
+		ORG $E000
+
+		
+		
+main:
+_Startup:
+
+			;Disable Watchdawg
+			LDA SOPT1
+			AND #%01111111
+			STA SOPT1
+			
+			; I2C
+			
+			; 1 SDA on PTB6, SCL on PTB7
+			LDA SOPT2;
+			ORA #%00000010
+			STA SOPT2
+			
+			MOV #$10, icky_add
+			MOV #$C1, icky_msg
+			
+			
+			JSR IIC_Startup_Master
+			
+			; PTB6 and 7 Outputs
+			;LDA #%11000000
+			;STA PTBDD
+			
+			
+			; Enable interrupts for PTAD 0-3
+			LDA #%00001111
+			STA KBIPE
+			
+			; Rising edge sensitive
+			LDA #%00001111
+			STA KBIES
+		
+			; Columns are inputs
+			BCLR 0, PTADD
+			BCLR 1, PTADD
+			BCLR 2, PTADD
+			BCLR 3, PTADD
+			
+			; Rows are outputs
+			BSET 2, PTBDD
+			BSET 3, PTBDD
+			BSET 4, PTBDD
+			BSET 5, PTBDD
+				
+			; Disable PTAPE
+			LDA #$00
+			STA PTAPE
+		
+			; Enable keyboard interupts
+			LDA #%00000010
+			STA KBISC
+			
+			CLI			; enable interrupts
+			
+			LDA #%11110
+			
+			
+
+mainLoop:
+
+			LDA $FF
+			STA $0062
+
+			LDA #$FF
+			STA $0061
+			
+			LDA #01
+			STA length
+			
+			LDA $0062
+			BNE rows
+			
+			JSR IIC_DataWrite
+			
+           	BRA mainLoop
+               
+rows:
+ 			JSR row1
+           	JSR row2
+           	JSR row3
+           	JSR row4
+           	
+      
+            BRA mainLoop
+          
+_Viic:
+
+		BSET IICS_IICIF, IICS
+		
+		BRSET IICC_MST, IICC, _Viic_master
+		
+		RTI
+		
+_Viic_master:
+		BRSET IICC_TX, IICC, _Viic_master_TX
+		BRA _Viic_master_RX
+		
+_Viic_master_TX: 
+		
+				LDA length
+				SUB current
+				BNE _Viic_master_rxAck 
+				
+			
+				BCLR IICC_MST, IICC
+				BSET IICS_ARBL, IICS 
+				
+				RTI
+ 
+_Viic_master_rxAck: 	
+					BRCLR IICS_RXAK, IICS, _Viic_master_EoAC
+					
+					BCLR IICC_MST, IICC
+					
+					RTI  
+
+_Viic_master_EoAC:
+					LDA icky_add
+					AND #%0000001
+					BNE _Viic_master_toRxMode
+					
+					
+					LDA $0060
+					STA icky_msg
+					
+					LDA icky_msg
+					STA IICD
+					
+					LDA current
+					INCA
+					STA current
+					
+					RTI
+
+_Viic_master_toRxMode: 
+						BCLR IICC_TX, IICC
+						LDA IICD
+						RTI  
+
+_Viic_master_RX: 
+				LDA length
+				SUB current
+				BEQ _Viic_master_rxStop
+				
+				INCA
+				BEQ _Viic_master_txAck
+				
+				BRA _Viic_master_readData
+
+
+_Viic_master_rxStop:
+					BCLR IICC_MST, IICC
+					BRA _Viic_master_readData
+
+
+_Viic_master_txAck: 
+					BSET IICC_TXAK, IICC
+					BRA _Viic_master_readData
+					
+
+_Viic_master_readData: 
+						
+						CLRH
+						LDX current
+				
+						
+						LDA IICD
+						STA icky_msg, X
+				
+						LDA current
+						INCA
+						STA current
+				
+						RTI
+
+IIC_Startup_Master: 
+					LDA #%10000111
+					STA IICF
+					
+					BSET IICC_IICEN,IICC
+					BSET IICC_IICIE,IICC
+					RTS
+					
+
+IIC_DataWrite:
+	
+				LDA #0 
+				STA current
+				
+				BSET 5, IICC 
+				BSET IICC_TX, IICC 
+				
+				LDA icky_add
+				STA IICD
+				
+				RTS 
+            
+key_press:
+		LDA PTBD
+		STA $0060
+		
+		LDA #$00
+		STA $0062
+			
+		BSET 2, KBISC
+		RTI
+		
+row1:
+		LDA #%00000100
+		STA PTBD
+		JSR sleep
+		RTS
+
+row2:
+		LDA #%00001000
+		STA PTBD
+		JSR sleep
+		RTS
+
+row3:
+		LDA #%00010000
+		STA PTBD
+		JSR sleep
+		RTS
+
+row4:
+		LDA #%00100000
+		STA PTBD
+		JSR sleep
+		RTS
+		
+sleep:
+		LDA $0061
+		DECA
+		STA $0061
+		BNE sleep2
+		RTS
+		
+sleep2:
+		NOP
+		NOP
+		NOP
+		NOP
+		BRA sleep		
+
+
+
+		
+		
+
+		
+		
+
+
